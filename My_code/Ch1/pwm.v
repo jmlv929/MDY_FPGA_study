@@ -1,9 +1,13 @@
-module pwm(
+module pwm #(
+    parameter N = 32768
+    )(
     clk,           //假设输入32.768MHz 时钟
     rst_n,
     en,
     pwm_out
-);                     //输出30%占空比的脉冲
+);                     //输出90%占空比的脉冲
+
+//PWM信号控制灯的亮度
 
 input clk;
 input rst_n;
@@ -44,7 +48,7 @@ begin
 end
 
 assign add_cnt_1ms = flag == 1'b1;
-assign end_cnt_1ms = add_cnt_1ms && (cnt_1ms == 16'd32768 - 1'b1);
+assign end_cnt_1ms = add_cnt_1ms && (cnt_1ms == N - 1'b1);
 
 
 always@(posedge clk or negedge rst_n)
@@ -60,17 +64,17 @@ begin
         end    
 end
 
-assign add_cnt_10ms = add_cnt_1ms && (16'd32768 - 1'b1);
+assign add_cnt_10ms = end_cnt_1ms;
 assign end_cnt_10ms = add_cnt_10ms && (cnt_10ms == 4'd10 - 1'b1);
 
 always@(posedge clk or negedge rst_n)
 begin
     if(!rst_n)
         pwm_out <= 1'b0;
-    else if(add_cnt_10ms && (cnt_10ms < 3) )
-        pwm_out <= 1'b1;
-    else 
+    else if(add_cnt_10ms && cnt_10ms == 1 -1 )
         pwm_out <= 1'b0;
+    else if(add_cnt_10ms && cnt_10ms == 2 -1 )
+        pwm_out <= 1'b1;
 end
 
 endmodule

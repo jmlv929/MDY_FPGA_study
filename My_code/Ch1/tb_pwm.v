@@ -7,7 +7,7 @@ reg rst_n;
 wire pwm_out;
 reg en;
 
-pwm t_pwm(
+pwm #(.N(8))  t_pwm (
     .clk(clk),           //假设输入32.768MHz 时钟
     .rst_n(rst_n),
     .en(en),
@@ -22,13 +22,13 @@ initial begin
     rst_n = 1'b0;
     en = 1'b0;
 
-    #500;
+    #50;
     rst_n = 1'b1;
 
-    #500;
+    #50;
     en = 1'b1;
 
-    #80000000;
+    #16000;
     $stop;
 
 end

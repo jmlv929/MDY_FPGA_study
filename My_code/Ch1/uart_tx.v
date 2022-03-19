@@ -46,10 +46,12 @@ always@(*)
 begin
     if(!rst_n)
         tx_ready = 1'b1;
-    else if(tx_valid)               //此处条件为 tx_valid || flag 更为合适
+    else if(tx_valid || flag)               //此处条件为 tx_valid || flag 更为合适
         tx_ready = 1'b0;
     else if(end_cnt)
         tx_ready = 1'b1;
+    else
+        tx_ready = 1'b0;
 end
 
 always@(posedge clk or negedge rst_n)
